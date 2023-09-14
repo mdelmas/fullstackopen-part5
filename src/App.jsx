@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { NotificationType, Notification } from './components/Notification';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState({ type: NotificationType.NONE });
-
-  console.log('user', user);
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -21,75 +18,84 @@ const App = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(window.localStorage.getItem('user'));
-    console.log('storedUser', storedUser);
     if (storedUser) {
       setUser(storedUser);
     }
   }, []);
 
-  const login = async (event) => {
-    event.preventDefault();
-
+  const handleLogin = async (username, password) => {
     try {
       let receivedUser = await loginService.login({ username, password });
       setUser(receivedUser);
       window.localStorage.setItem('user', JSON.stringify(receivedUser));
-
-      setUsername('');
-      setPassword('');  
     } catch (error) {
       setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
       setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
     }
   };
 
-  const logout = async (event) => {
+  const handleLogout = (event) => {
     event.preventDefault();
 
     setUser(null);
-    window.localStorage.removeItem('user');
+    window.localStorage.removeItem('user', null);
   };
 
-  const loginForm = () => (
-    <form>
-      <p>
-        Username: 
-        <input type='text' name='username' 
-          value={ username } 
-          onChange={ event => setUsername(event.target.value) }
-        />
-      </p>
-      <p>
-        Password: 
-        <input type='text' name='password' 
-          value={ password } 
-          onChange={ event => { setPassword(event.target.value) } }
-        />
-      </p>
-      <button type="submit" onClick={ login }>login</button>
-    </form>
-  )
+  const handleCreateBlog = async (blog) => {
+    try {
+      const newBlog = await blogService.createBlog(blog, user.token);
+      setBlogs(blogs.concat(newBlog));
+  
+      setNotification({ message: `New blog has been created : ${blog.title}`, type: NotificationType.SUCCESS });
+      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+    } catch (error) {
+      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
+      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+    }
+  };
 
-  const blogDisplay = () => (
-    <div>
-      <h2>blogs</h2>
-        <p>
-          { user.username } logged in
-          <button onClick={ logout }>Logout</button>
-        </p>
+  const handleLike = async (updatedBlog) => {
+    try {
+      updatedBlog.likes += 1;
+      await blogService.modifyBlog(updatedBlog, user.token);
+  
+      setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog));
+    } catch (error) {
+      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
+      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+    }
+  };
 
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
+  const handleDelete = async (blogToDelete) => {
+    try {
+      await blogService.deleteBlog(blogToDelete, user.token);
+      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id));
+  
+      setNotification({ message: `Blog has been deleted : ${blogToDelete.title}`, type: NotificationType.SUCCESS });
+      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+    } catch (error) {
+      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
+      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+    }
+  };
 
   return (
     <>
       <Notification notification={ notification } />
 
-      { !user && loginForm() }
-      { user && blogDisplay() }
+      { !user && 
+        <LoginForm handleLogin={ handleLogin } /> }
+        
+      { user && 
+        <BlogList 
+          blogs={ blogs } 
+          user={ user } 
+          handleLogout={ handleLogout }
+          handleCreateBlog={ handleCreateBlog }
+          handleLike={ handleLike }
+          handleDelete={ handleDelete }
+        /> 
+      }
     </>
   )
 }
