@@ -11,31 +11,31 @@ const LoginForm = ({ handleLogin }) => {
     handleLogin(username, password);
 
     setUsername('');
-    setPassword('');  
-  }
+    setPassword('');
+  };
 
   return (
     <form>
       <p>
-        Username: 
-        <input type='text' name='username' 
-          value={ username } 
+        Username:
+        <input type='text' name='username'
+          value={ username }
           onChange={ (event) => setUsername(event.target.value) }
         />
       </p>
       <p>
-        Password: 
-        <input type='text' name='password' 
-          value={ password } 
+        Password:
+        <input type='text' name='password'
+          value={ password }
           onChange={ (event) => setPassword(event.target.value) }
         />
       </p>
       <button type="submit" onClick={ login }>login</button>
     </form>
-  )
-}
+  );
+};
 LoginForm.propTypes = {
-  handleLogin: PropTypes.func,
-}
+  handleLogin: PropTypes.func.isRequired,
+};
 
 export default LoginForm;

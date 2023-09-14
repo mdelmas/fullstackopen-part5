@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Toggable = ({
@@ -13,22 +13,22 @@ const Toggable = ({
 
   return (
     <>
-      { !visible && 
+      { !visible &&
         <button onClick={ toggleVisibility }>{ buttonLabel }</button>
       }
 
-      { visible && 
+      { visible &&
         <div>
           { children }
           <button onClick={ toggleVisibility }>cancel</button>
-        </div> 
+        </div>
       }
     </>
   );
-}
+};
 Toggable.propTypes = {
-  buttonLabel: PropTypes.string,
+  buttonLabel: PropTypes.string.isRequired,
   children: PropTypes.any,
-}
+};
 
 export default Toggable;

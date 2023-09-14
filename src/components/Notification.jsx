@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 
 const NotificationType = {
-  NONE: 0, 
-  ERROR: 1, 
+  NONE: 0,
+  ERROR: 1,
   SUCCESS: 2
 };
 
@@ -18,12 +18,12 @@ const Notification = ({ notification }) => {
     borderRadius: '5px',
     padding: '10px',
     marginBottom: '10px'
-  }
+  };
 
-  return <div style={ style }>{ notification.message }</div>
+  return <div style={ style }>{ notification.message }</div>;
 };
 Notification.propTypes = {
-  notification: PropTypes.object
-}
+  notification: PropTypes.object.isRequired
+};
 
 export { NotificationType, Notification };

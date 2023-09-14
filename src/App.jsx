@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import BlogList from './components/BlogList'
-import LoginForm from './components/LoginForm'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { useState, useEffect } from 'react';
+import BlogList from './components/BlogList';
+import LoginForm from './components/LoginForm';
+import blogService from './services/blogs';
+import loginService from './services/login';
 import { NotificationType, Notification } from './components/Notification';
 
 const App = () => {
@@ -13,8 +13,8 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
-  }, [])
+    );
+  }, []);
 
   useEffect(() => {
     const storedUser = JSON.parse(window.localStorage.getItem('user'));
@@ -45,7 +45,7 @@ const App = () => {
     try {
       const newBlog = await blogService.createBlog(blog, user.token);
       setBlogs(blogs.concat(newBlog));
-  
+
       setNotification({ message: `New blog has been created : ${blog.title}`, type: NotificationType.SUCCESS });
       setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
     } catch (error) {
@@ -58,7 +58,7 @@ const App = () => {
     try {
       updatedBlog.likes += 1;
       await blogService.modifyBlog(updatedBlog, user.token);
-  
+
       setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog));
     } catch (error) {
       setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
@@ -70,7 +70,7 @@ const App = () => {
     try {
       await blogService.deleteBlog(blogToDelete, user.token);
       setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id));
-  
+
       setNotification({ message: `Blog has been deleted : ${blogToDelete.title}`, type: NotificationType.SUCCESS });
       setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
     } catch (error) {
@@ -83,21 +83,21 @@ const App = () => {
     <>
       <Notification notification={ notification } />
 
-      { !user && 
+      { !user &&
         <LoginForm handleLogin={ handleLogin } /> }
-        
-      { user && 
-        <BlogList 
-          blogs={ blogs } 
-          user={ user } 
+
+      { user &&
+        <BlogList
+          blogs={ blogs }
+          user={ user }
           handleLogout={ handleLogout }
           handleCreateBlog={ handleCreateBlog }
           handleLike={ handleLike }
           handleDelete={ handleDelete }
-        /> 
+        />
       }
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
