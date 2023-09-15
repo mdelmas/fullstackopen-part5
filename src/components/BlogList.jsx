@@ -88,4 +88,4 @@ BlogList.propTypes = {
   handleDelete: PropTypes.func.isRequired
 };
 
-export default BlogList;
+export { Blog, BlogList };
