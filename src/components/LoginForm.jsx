@@ -16,14 +16,14 @@ const LoginForm = ({ handleLogin }) => {
 
   return (
     <form>
-      <p>
+      <p id='username'>
         Username:
         <input type='text' name='username'
           value={ username }
           onChange={ (event) => setUsername(event.target.value) }
         />
       </p>
-      <p>
+      <p id='password'>
         Password:
         <input type='text' name='password'
           value={ password }

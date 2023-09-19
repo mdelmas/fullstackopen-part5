@@ -23,7 +23,7 @@ const Blog = ({ blog, user, handleLike, handleDelete }) => {
   };
 
   return (
-    <div style={ style }>
+    <div className='blog' style={ style }>
       { blog.title }
       <button onClick={ toggleOpen }>{ open ? 'hide' : 'view' }</button>
       <br />

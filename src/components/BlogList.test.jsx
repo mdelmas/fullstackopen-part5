@@ -80,7 +80,6 @@ describe('<BlogForm /> component', () => {
     expect(mockHandleCreateBlog.mock.calls).toHaveLength(1);
 
     const callContent = mockHandleCreateBlog.mock.calls[0][0];
-    console.log(callContent);
     expect(callContent.title).toBe(blog.title);
     expect(callContent.url).toBe(blog.url);
   });
