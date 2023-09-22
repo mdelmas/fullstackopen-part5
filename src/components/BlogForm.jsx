@@ -19,26 +19,32 @@ const BlogForm = ({ handleCreateBlog }) => {
       <h4>Create new blog</h4>
       <p>
         Title:
-        <input type='text' name='title'
-          value={ title }
-          onChange={ (event) => setTitle(event.target.value) }
-          placeholder='Title'
+        <input
+          type="text"
+          name="title"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Title"
         />
       </p>
       <p>
         Url:
-        <input type='text' name='url'
-          value={ url }
-          onChange={ (event) => setUrl(event.target.value) }
-          placeholder='Url'
+        <input
+          type="text"
+          name="url"
+          value={url}
+          onChange={(event) => setUrl(event.target.value)}
+          placeholder="Url"
         />
       </p>
-      <button type="submit" onClick={ createBlog }>Create</button>
+      <button type="submit" onClick={createBlog}>
+        Create
+      </button>
     </form>
   );
 };
 BlogForm.propTypes = {
-  handleCreateBlog: PropTypes.func.isRequired
+  handleCreateBlog: PropTypes.func.isRequired,
 };
 
 export default BlogForm;

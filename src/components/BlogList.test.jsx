@@ -9,7 +9,7 @@ const blog = {
   title: 'My blog :)',
   author: 'Me',
   url: 'myblog.com',
-  likes: 4
+  likes: 4,
 };
 const user = { username: 'Me' };
 const mockHandleLike = jest.fn();
@@ -18,12 +18,14 @@ const mockHandleCreateBlog = jest.fn();
 
 describe('<Blog /> component', () => {
   beforeEach(() => {
-    render(<Blog
-      blog={ blog }
-      user={ user }
-      handleLike={ mockHandleLike }
-      handleDelete={ mockHandleDelete }
-    />);
+    render(
+      <Blog
+        blog={blog}
+        user={user}
+        handleLike={mockHandleLike}
+        handleDelete={mockHandleDelete}
+      />,
+    );
   });
 
   test('renders blog content', () => {
@@ -32,7 +34,7 @@ describe('<Blog /> component', () => {
     expect(screen.queryByText(blog.url)).toBeNull();
   });
 
-  test('renders details when button \'view\' is clicked', async () => {
+  test("renders details when button 'view' is clicked", async () => {
     const user = userEvent.setup();
     const button = await screen.findByText('view');
     expect(button).not.toBeNull();
@@ -44,7 +46,7 @@ describe('<Blog /> component', () => {
     expect(screen.findByText(blog.url)).not.toBeNull();
   });
 
-  test('\'like\' button is working', async () => {
+  test("'like' button is working", async () => {
     const user = userEvent.setup();
 
     const viewButton = await screen.findByText('view');
@@ -64,7 +66,7 @@ describe('<Blog /> component', () => {
 
 describe('<BlogForm /> component', () => {
   beforeEach(() => {
-    render(<BlogForm handleCreateBlog={ mockHandleCreateBlog } />);
+    render(<BlogForm handleCreateBlog={mockHandleCreateBlog} />);
   });
 
   test('calls parent createBlog with correct parameters', async () => {

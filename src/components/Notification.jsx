@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const NotificationType = {
   NONE: 0,
   ERROR: 1,
-  SUCCESS: 2
+  SUCCESS: 2,
 };
 
 const Notification = ({ notification }) => {
@@ -12,18 +12,23 @@ const Notification = ({ notification }) => {
   }
 
   let style = {
-    backgroundColor: notification.type === NotificationType.ERROR ? 'red' : 'green',
+    backgroundColor:
+      notification.type === NotificationType.ERROR ? 'red' : 'green',
     color: 'white',
     fontSize: '20px',
     borderRadius: '5px',
     padding: '10px',
-    marginBottom: '10px'
+    marginBottom: '10px',
   };
 
-  return <div className='notification' style={ style }>{ notification.message }</div>;
+  return (
+    <div className="notification" style={style}>
+      {notification.message}
+    </div>
+  );
 };
 Notification.propTypes = {
-  notification: PropTypes.object.isRequired
+  notification: PropTypes.object.isRequired,
 };
 
 export { NotificationType, Notification };

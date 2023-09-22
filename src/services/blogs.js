@@ -7,11 +7,9 @@ const getAll = async () => {
 };
 
 const createBlog = async (newBlog, token) => {
-  const response = await axios.post(
-    `${baseUrl}/api/blogs`,
-    newBlog,
-    { headers: { Authorization: `bearer ${token}` } }
-  );
+  const response = await axios.post(`${baseUrl}/api/blogs`, newBlog, {
+    headers: { Authorization: `bearer ${token}` },
+  });
   return response.data;
 };
 
@@ -19,7 +17,7 @@ const modifyBlog = async (updatedBlog, token) => {
   const response = await axios.put(
     `${baseUrl}/api/blogs/${updatedBlog.id}`,
     { ...updatedBlog, author: updatedBlog.author?.id },
-    { headers: { Authorization: `bearer ${token}` } }
+    { headers: { Authorization: `bearer ${token}` } },
   );
   return response.data;
 };
@@ -27,7 +25,7 @@ const modifyBlog = async (updatedBlog, token) => {
 const deleteBlog = async (blogToDelete, token) => {
   const response = await axios.delete(
     `${baseUrl}/api/blogs/${blogToDelete.id}`,
-    { headers: { Authorization: `bearer ${token}` } }
+    { headers: { Authorization: `bearer ${token}` } },
   );
   return response.data;
 };

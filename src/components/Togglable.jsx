@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Toggable = ({
-  buttonLabel,
-  children
-}) => {
+const Toggable = ({ buttonLabel, children }) => {
   const [visible, setVisible] = useState(false);
 
   const toggleVisibility = () => {
@@ -13,16 +10,14 @@ const Toggable = ({
 
   return (
     <>
-      { !visible &&
-        <button onClick={ toggleVisibility }>{ buttonLabel }</button>
-      }
+      {!visible && <button onClick={toggleVisibility}>{buttonLabel}</button>}
 
-      { visible &&
+      {visible && (
         <div>
-          { children }
-          <button onClick={ toggleVisibility }>cancel</button>
+          {children}
+          <button onClick={toggleVisibility}>cancel</button>
         </div>
-      }
+      )}
     </>
   );
 };

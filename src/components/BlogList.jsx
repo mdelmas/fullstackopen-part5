@@ -19,35 +19,32 @@ const Blog = ({ blog, user, handleLike, handleDelete }) => {
   const style = {
     backgroundColor: open ? 'aliceblue' : 'whitesmoke',
     padding: 2,
-    margin: 4
+    margin: 4,
   };
 
   return (
-    <div className='blog' style={ style }>
-      { blog.title }
-      <button onClick={ toggleOpen }>{ open ? 'hide' : 'view' }</button>
+    <div className="blog" style={style}>
+      {blog.title}
+      <button onClick={toggleOpen}>{open ? 'hide' : 'view'}</button>
       <br />
 
-      {
-        open &&
-          <>
-            { blog.url }<br />
-
-            likes { `${blog.likes}` }
-            <button onClick={ () => handleLike(blog) }>like</button>
-            <br />
-
-            {
-              blog.author &&
-                <>{ blog.author.username } <br /></>
-            }
-
-            {
-              blog.author && blog.author.username === user.username &&
-              <button onClick={ deleteBlog }>delete</button>
-            }
-          </>
-      }
+      {open && (
+        <>
+          {blog.url}
+          <br />
+          likes {`${blog.likes}`}
+          <button onClick={() => handleLike(blog)}>like</button>
+          <br />
+          {blog.author && (
+            <>
+              {blog.author.username} <br />
+            </>
+          )}
+          {blog.author && blog.author.username === user.username && (
+            <button onClick={deleteBlog}>delete</button>
+          )}
+        </>
+      )}
     </div>
   );
 };
@@ -55,27 +52,38 @@ Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
   handleLike: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired
+  handleDelete: PropTypes.func.isRequired,
 };
 
-const BlogList = ({ blogs, user, handleLogout, handleCreateBlog, handleLike, handleDelete }) => {
-  blogs.sort((b1, b2) => b2.likes - b1.likes);
-
+const BlogList = ({
+  blogs,
+  user,
+  handleLogout,
+  handleCreateBlog,
+  handleLike,
+  handleDelete,
+}) => {
   return (
     <div>
       <h2>blogs</h2>
       <p>
-        { user.username } logged in
-        <button onClick={ handleLogout }>Logout</button>
+        {user.username} logged in
+        <button onClick={handleLogout}>Logout</button>
       </p>
 
-      <Togglable buttonLabel='Add blog'>
-        <BlogForm handleCreateBlog={ handleCreateBlog } />
+      <Togglable buttonLabel="Add blog">
+        <BlogForm handleCreateBlog={handleCreateBlog} />
       </Togglable>
 
-      { blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} handleLike={handleLike} handleDelete={handleDelete} />
-      )}
+      {blogs.map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          handleLike={handleLike}
+          handleDelete={handleDelete}
+        />
+      ))}
     </div>
   );
 };
@@ -85,7 +93,7 @@ BlogList.propTypes = {
   handleLogout: PropTypes.func.isRequired,
   handleCreateBlog: PropTypes.func.isRequired,
   handleLike: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export { Blog, BlogList };

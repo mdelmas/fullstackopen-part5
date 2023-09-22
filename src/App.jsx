@@ -1,101 +1,92 @@
 import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { BlogList } from './components/BlogList';
 import LoginForm from './components/LoginForm';
+import { Notification } from './components/Notification';
+
 import blogService from './services/blogs';
-import loginService from './services/login';
-import { NotificationType, Notification } from './components/Notification';
+
+import { displayErrorNotification, displaySuccessNotification } from './reducers/notificationReducer';
+import { addBlog, initializeBlogs, modifyBlog, deleteBlog } from './reducers/blogsReducer';
+import { login, logout, retrieveUser } from './reducers/userReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState({ type: NotificationType.NONE });
+  const dispatch = useDispatch();
+  const notification = useSelector((state) => state.notification);
+  const blogs = useSelector((state) => [...state.blogs].sort((b1, b2) => b2.likes - b1.likes));
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    );
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
-    const storedUser = JSON.parse(window.localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    dispatch(retrieveUser());
   }, []);
 
   const handleLogin = async (username, password) => {
-    try {
-      let receivedUser = await loginService.login({ username, password });
-      setUser(receivedUser);
-      window.localStorage.setItem('user', JSON.stringify(receivedUser));
-    } catch (error) {
-      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
-    }
+    dispatch(login({ username, password }))
+      .catch(error => dispatch(displayErrorNotification(`Error: ${error.message}`)));
   };
 
   const handleLogout = (event) => {
     event.preventDefault();
 
-    setUser(null);
-    window.localStorage.removeItem('user', null);
+    dispatch(logout());
   };
 
   const handleCreateBlog = async (blog) => {
     try {
       const newBlog = await blogService.createBlog(blog, user.token);
-      setBlogs(blogs.concat(newBlog));
+      dispatch(addBlog(newBlog));
 
-      setNotification({ message: `New blog has been created : ${blog.title}`, type: NotificationType.SUCCESS });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+      dispatch(displaySuccessNotification(`New blog has been created : ${blog.title}`));
     } catch (error) {
-      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+      dispatch(displayErrorNotification(`Error: ${error.message}`));
     }
   };
 
-  const handleLike = async (updatedBlog) => {
+  const handleLike = async (blogToUpdate) => {
     try {
-      updatedBlog.likes += 1;
+      const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 };
       await blogService.modifyBlog(updatedBlog, user.token);
 
-      setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog));
+      dispatch(modifyBlog(updatedBlog));
+
+      dispatch(displaySuccessNotification(`Liked blog : ${updatedBlog.title}`));
     } catch (error) {
-      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+      dispatch(displayErrorNotification(`Error: ${error.message}`));
     }
   };
 
   const handleDelete = async (blogToDelete) => {
     try {
       await blogService.deleteBlog(blogToDelete, user.token);
-      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id));
+      dispatch(deleteBlog(blogToDelete));
 
-      setNotification({ message: `Blog has been deleted : ${blogToDelete.title}`, type: NotificationType.SUCCESS });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+      dispatch(displaySuccessNotification(`Blog has been deleted : ${blogToDelete.title}`));
     } catch (error) {
-      setNotification({ message: `Error: ${error.message}`, type: NotificationType.ERROR });
-      setTimeout(() => setNotification({ type: NotificationType.NONE }), 4000);
+      dispatch(displayErrorNotification(`Error: ${error.message}`));
     }
   };
 
   return (
     <>
-      <Notification notification={ notification } />
+      <Notification notification={notification} />
 
-      { !user &&
-        <LoginForm handleLogin={ handleLogin } /> }
+      {!user && <LoginForm handleLogin={handleLogin} />}
 
-      { user &&
+      {user && (
         <BlogList
-          blogs={ blogs }
-          user={ user }
-          handleLogout={ handleLogout }
-          handleCreateBlog={ handleCreateBlog }
-          handleLike={ handleLike }
-          handleDelete={ handleDelete }
+          blogs={blogs}
+          user={user}
+          handleLogout={handleLogout}
+          handleCreateBlog={handleCreateBlog}
+          handleLike={handleLike}
+          handleDelete={handleDelete}
         />
-      }
+      )}
     </>
   );
 };

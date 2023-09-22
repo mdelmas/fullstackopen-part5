@@ -1,7 +1,7 @@
 const user = {
   username: 'user',
   name: 'User Name',
-  password: 'password'
+  password: 'password',
 };
 const blogs = [
   {
@@ -18,20 +18,21 @@ const blogs = [
     title: 'Canonical string reduction',
     url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
-  }
+  },
 ];
 const newBlog = {
   title: 'My new blog post',
-  url: 'mynewblogpost.com'
+  url: 'mynewblogpost.com',
 };
 
-
 Cypress.Commands.add('login', ({ username, password }) => {
-  cy.request('POST', `${Cypress.env('BACKEND')}/login`, { username, password })
-    .then(({ body }) => {
-      localStorage.setItem('user', JSON.stringify(body));
-      cy.visit('');
-    });
+  cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
+    username,
+    password,
+  }).then(({ body }) => {
+    localStorage.setItem('user', JSON.stringify(body));
+    cy.visit('');
+  });
 });
 
 Cypress.Commands.add('addBlog', ({ title, url, likes = 0 }) => {
@@ -40,33 +41,33 @@ Cypress.Commands.add('addBlog', ({ title, url, likes = 0 }) => {
     method: 'POST',
     body: { title, url, likes },
     headers: {
-      'Authorization': `bearer ${JSON.parse(localStorage.getItem('user')).token}`
-    }
+      Authorization: `bearer ${JSON.parse(localStorage.getItem('user')).token}`,
+    },
   });
   cy.visit('');
 });
 
-describe('Blog app', function() {
-  beforeEach(function() {
+describe('Blog app', function () {
+  beforeEach(function () {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`);
     cy.request('POST', `${Cypress.env('BACKEND')}/users`, {
       username: 'admin',
       name: 'Admin',
-      password: 'admin'
+      password: 'admin',
     });
     cy.request('POST', `${Cypress.env('BACKEND')}/users`, user);
 
     cy.visit('');
   });
 
-  it('Login form is shown', function() {
+  it('Login form is shown', function () {
     cy.get('#username').contains('Username').children('input');
     cy.get('#password').contains('Password').children('input');
     cy.get('button').contains('login');
   });
 
-  describe('Login', function() {
-    it('works with good username and password', function() {
+  describe('Login', function () {
+    it('works with good username and password', function () {
       cy.get('#username').children('input').type(user.username);
       cy.get('#password').children('input').type(user.password);
       cy.get('button').click();
@@ -75,13 +76,15 @@ describe('Blog app', function() {
       cy.contains(`${user.username} logged in`);
     });
 
-    it('fails with incorrect username and password', function() {
+    it('fails with incorrect username and password', function () {
       cy.get('#username').children('input').type(user.username);
       cy.get('#password').children('input').type('falsePassword');
 
       cy.get('button').click();
 
-      cy.get('.notification').contains('Error').should('have.css', 'background-color', 'rgb(255, 0, 0)');
+      cy.get('.notification')
+        .contains('Error')
+        .should('have.css', 'background-color', 'rgb(255, 0, 0)');
       cy.contains('blogs').should('not.exist');
       cy.contains(`${user.username} logged in`).should('not.exist');
 
@@ -91,8 +94,8 @@ describe('Blog app', function() {
     });
   });
 
-  describe.only('When logged in', function() {
-    beforeEach(function() {
+  describe.only('When logged in', function () {
+    beforeEach(function () {
       cy.login({ username: 'admin', password: 'admin' });
       blogs.forEach((blog) => {
         cy.addBlog(blog);
@@ -101,7 +104,7 @@ describe('Blog app', function() {
       cy.login({ username: user.username, password: user.password });
     });
 
-    it('a blog can be created', function() {
+    it('a blog can be created', function () {
       cy.get('h2').contains('blogs');
       cy.get('.blog').should('have.length', blogs.length);
 
@@ -113,20 +116,20 @@ describe('Blog app', function() {
 
       cy.wait(1000);
 
-      cy.get('.blog').should('have.length', blogs.length+1);
+      cy.get('.blog').should('have.length', blogs.length + 1);
     });
 
-    it('user can like a blog', function() {
+    it('user can like a blog', function () {
       cy.get('.blog').contains(blogs[1].title).as('blog');
 
       cy.get('@blog').find('button').contains('view').click();
 
       cy.get('@blog').contains(`likes ${blogs[1].likes}`);
       cy.get('@blog').find('button').contains('like').click();
-      cy.get('@blog').contains(`likes ${blogs[1].likes+1}`);
+      cy.get('@blog').contains(`likes ${blogs[1].likes + 1}`);
     });
 
-    it('user can delete a blog he created', function() {
+    it('user can delete a blog he created', function () {
       cy.addBlog(newBlog);
 
       cy.get('.blog').contains(newBlog.title).as('blog');
@@ -140,14 +143,14 @@ describe('Blog app', function() {
       cy.contains(newBlog.title).should('not.exist');
     });
 
-    it('user can\'t delete a blog he hasn\'t created', function() {
+    it("user can't delete a blog he hasn't created", function () {
       cy.get('.blog').contains(blogs[1].title);
       cy.get('@blog').find('button').contains('view').click();
 
       cy.get('@blog').find('button').contains('delete').should('not.exist');
     });
 
-    it.only('blogs list is ordered by number of likes', function() {
+    it.only('blogs list is ordered by number of likes', function () {
       const maxLikesBlog = blogs.reduce((maxLikesBlog, blog) => {
         return blog.likes > maxLikesBlog.likes ? blog : maxLikesBlog;
       }, blogs[0]);
@@ -156,7 +159,9 @@ describe('Blog app', function() {
       }, blogs[0]);
 
       cy.get('.blog').eq(0).contains(maxLikesBlog.title);
-      cy.get('.blog').eq(blogs.length-1).contains(minLikesBlog.title);
+      cy.get('.blog')
+        .eq(blogs.length - 1)
+        .contains(minLikesBlog.title);
     });
   });
 });
