@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 
-const NotificationType = {
+import { Alert } from '@mui/material';
+
+export const NotificationType = {
   NONE: 0,
   ERROR: 1,
   SUCCESS: 2,
@@ -11,24 +13,12 @@ const Notification = ({ notification }) => {
     return null;
   }
 
-  let style = {
-    backgroundColor:
-      notification.type === NotificationType.ERROR ? 'red' : 'green',
-    color: 'white',
-    fontSize: '20px',
-    borderRadius: '5px',
-    padding: '10px',
-    marginBottom: '10px',
-  };
-
   return (
-    <div className="notification" style={style}>
-      {notification.message}
-    </div>
+    <Alert severity={ notification.type === NotificationType.ERROR ? 'error' : 'success'}>{notification.message}</Alert>
   );
 };
 Notification.propTypes = {
   notification: PropTypes.object.isRequired,
 };
 
-export { NotificationType, Notification };
+export default Notification;

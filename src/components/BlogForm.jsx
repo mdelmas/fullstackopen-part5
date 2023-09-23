@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
+import { Button, Typography, TextField } from '@mui/material';
+
 const BlogForm = ({ handleCreateBlog }) => {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
@@ -16,30 +18,32 @@ const BlogForm = ({ handleCreateBlog }) => {
 
   return (
     <form>
-      <h4>Create new blog</h4>
-      <p>
-        Title:
-        <input
-          type="text"
-          name="title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Title"
-        />
-      </p>
-      <p>
-        Url:
-        <input
-          type="text"
-          name="url"
-          value={url}
-          onChange={(event) => setUrl(event.target.value)}
-          placeholder="Url"
-        />
-      </p>
-      <button type="submit" onClick={createBlog}>
-        Create
-      </button>
+      <Typography variant="h6" gutterBottom>Create new blogs</Typography>
+      <TextField
+        fullWidth
+        size="small"
+        label="Title"
+        variant="outlined"
+        type="text"
+        name="title"
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+        placeholder="Title"
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        fullWidth
+        size="small"
+        label="Url"
+        variant="outlined"
+        type="text"
+        name="url"
+        value={url}
+        onChange={(event) => setUrl(event.target.value)}
+        placeholder="Url"
+        sx={{ mb: 2 }}
+      />
+      <Button sx={{ mb: 2 }} type="submit" variant="contained" onClick={createBlog} margin="normal">Create</Button>
     </form>
   );
 };

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import loginService from '../services/login';
+import usersService from '../services/users';
 
 const initialState = null;
 
@@ -26,7 +26,7 @@ export const retrieveUser = () => {
 
 export const login = ({ username, password }) => {
   return async (dispatch) => {
-    let receivedUser = await loginService.login({ username, password });
+    let receivedUser = await usersService.login({ username, password });
     dispatch(setUser(receivedUser));
     window.localStorage.setItem('user', JSON.stringify(receivedUser));
   };

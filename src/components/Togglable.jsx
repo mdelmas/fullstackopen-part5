@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import { Button, Box } from '@mui/material';
+
 const Toggable = ({ buttonLabel, children }) => {
   const [visible, setVisible] = useState(false);
 
@@ -9,16 +11,16 @@ const Toggable = ({ buttonLabel, children }) => {
   };
 
   return (
-    <>
-      {!visible && <button onClick={toggleVisibility}>{buttonLabel}</button>}
+    <Box sx={{ bgcolor: 'whitesmoke', padding: '10px', borderRadius: 2 }}>
+      {!visible && <Button variant="text" onClick={toggleVisibility}>{buttonLabel}</Button>}
 
       {visible && (
-        <div>
+        <>
           {children}
-          <button onClick={toggleVisibility}>cancel</button>
-        </div>
+          <Button variant="outlined" onClick={toggleVisibility}>Cancel</Button>
+        </>
       )}
-    </>
+    </Box>
   );
 };
 Toggable.propTypes = {
